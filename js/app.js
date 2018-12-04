@@ -1,11 +1,23 @@
 // Enemies our player must avoid
-var Enemy = function() {
+var Enemy = function(currentRow) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+    this.imageOffset = 18;
+    this.currentRow = currentRow;
+};
+
+Enemy.prototype.place = function() {
+
+    let col = 1;
+    this.x = imageWidth * (col-1);
+    this.y = (imageHeight * (this.currentRow-1)) - this.imageOffset;
+    console.log(this.currentRow-1)
+
+
 };
 
 // Update the enemy's position, required method for game
@@ -61,7 +73,6 @@ Player.prototype.handleInput = function(KEY_STATUS) {
           if (this.y <= -this.imageOffset)
               this.y = -this.imageOffset;
     } else if (KEY_STATUS=='down') {
-      console.log(ctx.canvas.height, this.y)
         this.y += imageHeight;
         if ((this.y >= ((rows-1) * imageHeight) - this.imageOffset))
             this.y = ((rows-1) * imageHeight) - this.imageOffset;
@@ -71,9 +82,12 @@ Player.prototype.handleInput = function(KEY_STATUS) {
 
 
 // Now instantiate your objects.
+const enemyOne = new Enemy(2);
+const enemyTwo = new Enemy(3);
+const enemyThree = new Enemy(4);
 // Place all enemy objects in an array called allEnemies
-const enemyOne = new Enemy();
-const allEnemies = [];
+
+const allEnemies = [enemyOne, enemyTwo, enemyThree];
 
 // Place the player object in a variable called player
 const player = new Player();

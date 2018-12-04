@@ -71,6 +71,9 @@ var Engine = (function(global) {
         reset();
         lastTime = Date.now();
         player.place();
+        allEnemies.forEach(function(enemy) {
+            enemy.place();
+        });
         main();
     }
 
