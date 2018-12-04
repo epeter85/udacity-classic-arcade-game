@@ -24,6 +24,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         columns = 5,
         rows = 6,
+        imageHeight = 83,
+        imageWidth = 101,
         lastTime;
 
     canvas.width = 505;
@@ -138,7 +140,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                ctx.drawImage(Resources.get(rowImages[row]), col * imageWidth, row * imageHeight);
             }
         }
 
@@ -188,4 +190,6 @@ var Engine = (function(global) {
     global.ctx = ctx;
     global.columns = columns;
     global.rows = rows;
+    global.imageWidth = imageWidth;
+    global.imageHeight = imageHeight;
 })(this);

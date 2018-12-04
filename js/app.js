@@ -26,15 +26,15 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
     this.sprite = 'images/char-boy.png';
-    console.log('Player init')
+    this.imageOffset = 9;
 };
 
 Player.prototype.place = function() {
     //home position for player token
     let col = 3;
-    let row = 5;
-    this.x = (ctx.canvas.width / columns) * (col-1);
-    this.y = (ctx.canvas.height / rows) * (row-1);
+    let row = 6;
+    this.x = imageWidth * (col-1);
+    this.y = (imageHeight * (row-1)) - this.imageOffset;
 
 };
 
@@ -48,26 +48,23 @@ Player.prototype.render = function() {
 
 Player.prototype.handleInput = function(KEY_STATUS) {
 
-    let offsetToCenter = 18;
-    let squareHeight = (ctx.canvas.height / rows) - offsetToCenter;
-    let squareWidth = ctx.canvas.width / columns;
-
     if (KEY_STATUS=='left') {
-        this.x -= squareWidth
-        // if (this.x <= 0) // Kep player within the screen
-        //     this.x = 0;
+        this.x -= imageWidth
+        if (this.x <= 0)
+            this.x = 0;
     } else if (KEY_STATUS=='right') {
-        this.x += squareWidth
-        // if (this.x >= this.canvasWidth - this.width)
-        //     this.x = this.canvasWidth - this.width;
+        this.x += imageWidth
+        if (this.x >= ctx.canvas.width - imageWidth)
+            this.x = ctx.canvas.width - imageWidth;
     } else if (KEY_STATUS=='up') {
-        this.y -= squareHeight;
-        // if (this.y <= this.canvasHeight/4*3)
-        //     this.y = this.canvasHeight/4*3;
+        this.y -= imageHeight;
+          if (this.y <= -this.imageOffset)
+              this.y = -this.imageOffset;
     } else if (KEY_STATUS=='down') {
-        this.y += squareHeight;
-        // if (this.y >= this.canvasHeight - this.height)
-        //     this.y = this.canvasHeight - this.height;
+      console.log(ctx.canvas.height, this.y)
+        this.y += imageHeight;
+        if ((this.y >= ((rows-1) * imageHeight) - this.imageOffset))
+            this.y = ((rows-1) * imageHeight) - this.imageOffset;
     }
 
 }
