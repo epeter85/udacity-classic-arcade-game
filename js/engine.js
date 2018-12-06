@@ -26,6 +26,7 @@ var Engine = (function(global) {
         rows = 6,
         imageHeight = 83,
         imageWidth = 101,
+        crossings = 0,
         lastTime;
 
     canvas.width = 505;
@@ -77,6 +78,7 @@ var Engine = (function(global) {
         main();
     }
 
+
     /* This function is called by main (our game loop) and itself calls all
      * of the functions which may need to update entity's data. Based on how
      * you implement your collision detection (when two entities occupy the
@@ -88,7 +90,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function and loops through all of the
@@ -103,6 +105,17 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
+    }
+
+    function checkCollisions() {
+
+        allEnemies.forEach(function(enemy) {
+
+          if (enemy.x < player.x + player.hitWidth &&
+            enemy.x + enemy.hitWidth > player.x &&
+            enemy.y < player.y + player.hitHeight &&
+            enemy.y + enemy.hitHeight > player.y) player.isColliding = true;
+        });
     }
 
     /* This function initially draws the "game level", it will then call
