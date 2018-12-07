@@ -1,14 +1,12 @@
 // Enemies our player must avoid
 var Enemy = function(currentRow) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
+    // Ememies variables
     this.sprite = 'images/enemy-bug.png';
     this.imageOffset = 18;
     this.currentRow = currentRow;
+    //enemies intiated with random speed and also in update
     this.speed = Math.floor(Math.random() * (+6 - +2)) + +2;
+    //tweak hit width and height for collision
     this.hitWidth = 90;
     this.hitHeight = 40;
 };
@@ -17,21 +15,19 @@ Enemy.prototype.place = function() {
     let col = 1;
     this.x = imageWidth * (col-1);
     this.y = (imageHeight * (this.currentRow-1)) - this.imageOffset;
-    //console.log(this.currentRow-1)
 };
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+
     this.x +=((this.speed*100)*dt);
+
+    //puts enemies back to home position and generates a randon speed
     if(this.x > ctx.canvas.width) {
       this.x = -(Math.floor(Math.random() * (+500 - +1)) + +1);
       this.speed = Math.floor(Math.random() * (+6 - +2)) + +2;
     }
-    //this.checkCollisions();
 };
 
 // Draw the enemy on the screen, required method for game
@@ -39,10 +35,9 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+
 var Player = function() {
+    //player variables
     this.sprite = 'images/char-boy.png';
     this.hitWidth = 90;
     this.hitHeight = 40;
@@ -64,9 +59,8 @@ Player.prototype.place = function() {
 
 Player.prototype.update = function(dt) {
 
-
+    //collision trigger
     if (this.isColliding) {
-      console.log('got hit!');
       //move token back to home
       this.place();
       //reset flag
@@ -75,7 +69,6 @@ Player.prototype.update = function(dt) {
       this.lives -= 1;
 
       if(this.lives == 0) {
-        console.log('game over')
         callModal('game_over');
       }
 
@@ -83,8 +76,8 @@ Player.prototype.update = function(dt) {
 
     }
 
+    //crossing trigger
     if (this.hasCrossed) {
-      console.log('crossed!');
       //add one crossing
       this.crossings +=1;
       //move token back to home
@@ -93,7 +86,6 @@ Player.prototype.update = function(dt) {
       this.hasCrossed = false;
 
       if(this.crossings == 5) {
-        console.log('you win')
         callModal('win');
       }
 
@@ -101,9 +93,9 @@ Player.prototype.update = function(dt) {
     }
 };
 
+//updates lives and crossings
 Player.prototype.updateScore = function() {
 
-  console.log('updateScore')
   let lives = document.querySelector('.lives');
   let crossings = document.querySelector('.crossings');
 
@@ -174,13 +166,13 @@ var initGame = function() {
 
 }
 
+//modal window has three states: intro, game_over and win
 var callModal = function(state) {
-
-  console.log('state = ' + state);
 
   let modal = document.getElementById('myModal');
   let modalText = document.querySelector('.modalText');
   let playAgain = document.getElementById("playAgain");
+  let gameTime = document.getElementById('time').innerHTML;
 
   if (state === 'intro') {
 
@@ -189,8 +181,11 @@ var callModal = function(state) {
   }
 
   if (state === 'game_over') {
+
+    clearInterval(gameClock);
+
     if(player.crossings > 0) {
-      modalText.textContent = `Nice try but the bugs were too fast. You did mangage to make ${player.crossings} crossings.`;
+      modalText.textContent = `Nice try but the bugs were too fast. You did mangage to make ${player.crossings} crossing(s).`;
     }else{
       modalText.textContent = `Nice try but the bugs were too fast.`;
     }
@@ -198,7 +193,8 @@ var callModal = function(state) {
   }
 
   if (state === 'win') {
-      modalText.textContent = `Nice job frog!`;
+      clearInterval(gameClock);
+      modalText.textContent = `Nice job frog! You won with ${gameTime} seconds to spare and ${player.lives} lives remaining.`;
       playAgain.textContent = 'play again';
   }
 
@@ -216,14 +212,15 @@ var callModal = function(state) {
 
       //start countdown timer
       display = document.querySelector('#time');
-      startTimer(1, display);
+      startTimer(30, display);
   }
 }
 
+//simple countdown timer
 var startTimer = function (duration, display) {
   console.log('start timer')
     var timer = duration, minutes, seconds;
-    setInterval(function () {
+    gameClock = setInterval(function () {
         minutes = parseInt(timer / 60, 10)
         seconds = parseInt(timer % 60, 10);
 
@@ -235,7 +232,6 @@ var startTimer = function (duration, display) {
         if (--timer < 0) {
             timer = duration;
             callModal('game_over');
-            clearInterval(startTimer);
         }
     }, 1000);
 }
