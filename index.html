@@ -6,14 +6,29 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div>Game Title</div>
-    <script src="js/resources.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/engine.js"></script>
-    <div>
-      <div>time</div>
-      <div>lives:</div>
-      <div>crossings:</div>
+  <div class="container">
+
+    <header>
+        <h1>Frogger</h1>
+    </header>
+
+    <section class="score-panel">
+      <div><b>time: </b><span id="time">00:30</span></div>
+      <div><b>lives:</b> <span class="lives">3</span></div>
+      <div><b>crossings:</b> <span class="crossings">0</span></div>
+    </section>
+
+    <div id="gameBoard"></div>
+
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <p class="modalText"></p>
+        <button id='playAgain'></button>
+      </div>
     </div>
+  </div>
+      <script src="js/resources.js"></script>
+      <script src="js/app.js"></script>
+      <script src="js/engine.js"></script>
 </body>
 </html>

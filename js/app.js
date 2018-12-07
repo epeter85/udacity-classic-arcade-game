@@ -17,7 +17,7 @@ Enemy.prototype.place = function() {
     let col = 1;
     this.x = imageWidth * (col-1);
     this.y = (imageHeight * (this.currentRow-1)) - this.imageOffset;
-    console.log(this.currentRow-1)
+    //console.log(this.currentRow-1)
 };
 
 // Update the enemy's position, required method for game
@@ -34,10 +34,6 @@ Enemy.prototype.update = function(dt) {
     //this.checkCollisions();
 };
 
-// Enemy.prototype.checkCollisions = function() {
-//     //console.log('enemy check collision')
-// }
-
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -52,6 +48,9 @@ var Player = function() {
     this.hitHeight = 40;
     this.imageOffset = 9;
     this.isColliding = false;
+    this.hasCrossed = false;
+    this.crossings = 0;
+    this.lives = 3;
 };
 
 Player.prototype.place = function() {
@@ -64,12 +63,54 @@ Player.prototype.place = function() {
 };
 
 Player.prototype.update = function(dt) {
-    console.log(this.isColliding)
+
+
     if (this.isColliding) {
+      console.log('got hit!');
+      //move token back to home
       this.place();
+      //reset flag
       this.isColliding = false;
+      //remove one life
+      this.lives -= 1;
+
+      if(this.lives == 0) {
+        console.log('game over')
+        callModal('game_over');
+      }
+
+      this.updateScore();
+
+    }
+
+    if (this.hasCrossed) {
+      console.log('crossed!');
+      //add one crossing
+      this.crossings +=1;
+      //move token back to home
+      this.place();
+      //reset flag
+      this.hasCrossed = false;
+
+      if(this.crossings == 5) {
+        console.log('you win')
+        callModal('win');
+      }
+
+      this.updateScore();
     }
 };
+
+Player.prototype.updateScore = function() {
+
+  console.log('updateScore')
+  let lives = document.querySelector('.lives');
+  let crossings = document.querySelector('.crossings');
+
+  lives.textContent = this.lives;
+  crossings.textContent = this.crossings;
+
+}
 
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -108,7 +149,8 @@ const allEnemies = [enemyOne, enemyTwo, enemyThree];
 // Place the player object in a variable called player
 const player = new Player();
 
-//console.log(window)
+
+
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
@@ -121,3 +163,81 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+var initGame = function() {
+
+  player.place();
+
+  allEnemies.forEach(function(enemy) {
+      enemy.place();
+  });
+
+}
+
+var callModal = function(state) {
+
+  console.log('state = ' + state);
+
+  let modal = document.getElementById('myModal');
+  let modalText = document.querySelector('.modalText');
+  let playAgain = document.getElementById("playAgain");
+
+  if (state === 'intro') {
+
+      modalText.innerHTML = '<h2>Welcome to Frogger.</h2><p>The object of this game is to get your frog across traffic <b>five</b> times in <b>30</b> seconds.</p><p>You have <b>three</b> lives to make it happen!</p>';
+      playAgain.textContent = 'start game';
+  }
+
+  if (state === 'game_over') {
+    if(player.crossings > 0) {
+      modalText.textContent = `Nice try but the bugs were too fast. You did mangage to make ${player.crossings} crossings.`;
+    }else{
+      modalText.textContent = `Nice try but the bugs were too fast.`;
+    }
+    playAgain.textContent = 'play again';
+  }
+
+  if (state === 'win') {
+      modalText.textContent = `Nice job frog!`;
+      playAgain.textContent = 'play again';
+  }
+
+  modal.style.display = "block";
+
+  playAgain.onclick = function() {
+      modal.style.display = "none";
+      //clear stats
+      player.crossings = 0;
+      player.lives = 3;
+      if(state == 'intro'){
+        initGame();
+      }
+      player.updateScore();
+
+      //start countdown timer
+      display = document.querySelector('#time');
+      startTimer(1, display);
+  }
+}
+
+var startTimer = function (duration, display) {
+  console.log('start timer')
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            timer = duration;
+            callModal('game_over');
+            clearInterval(startTimer);
+        }
+    }, 1000);
+}
+//
+callModal('intro');

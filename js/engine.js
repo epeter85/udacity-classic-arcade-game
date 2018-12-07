@@ -26,12 +26,13 @@ var Engine = (function(global) {
         rows = 6,
         imageHeight = 83,
         imageWidth = 101,
-        crossings = 0,
+        gameBoard = doc.getElementById("gameBoard"),
         lastTime;
 
     canvas.width = 505;
     canvas.height = 606;
-    doc.body.appendChild(canvas);
+
+    gameBoard.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -71,10 +72,6 @@ var Engine = (function(global) {
         console.log('init game');
         reset();
         lastTime = Date.now();
-        player.place();
-        allEnemies.forEach(function(enemy) {
-            enemy.place();
-        });
         main();
     }
 
@@ -116,6 +113,10 @@ var Engine = (function(global) {
             enemy.y < player.y + player.hitHeight &&
             enemy.y + enemy.hitHeight > player.y) player.isColliding = true;
         });
+
+        if(player.y <= 0) {
+          player.hasCrossed = true;
+        }
     }
 
     /* This function initially draws the "game level", it will then call
@@ -185,6 +186,7 @@ var Engine = (function(global) {
     function reset() {
         // noop
     }
+
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
