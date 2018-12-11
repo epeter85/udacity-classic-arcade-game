@@ -3,7 +3,6 @@
 class Character {
 
   constructor() {
-    //this.sprite;
     this.speed = Math.floor(Math.random() * (+6 - +2)) + +2;
     //tweak hit width and height for collision
     this.hitWidth = 90;
@@ -202,20 +201,21 @@ var callModal = function(state) {
       if(state == 'intro'){
         initGame();
       }
-      player.updateScore();
 
       //start countdown timer
       let display = document.getElementById('time');
       console.log('display: ' + document.getElementById('time'))
       startTimer(30, display);
+
+      player.updateScore();
   }
 }
 
 //simple countdown timer
 var startTimer = function (duration, display) {
   console.log('start timer')
-    var timer = duration, minutes, seconds;
-    gameClock = setInterval(function () {
+    let timer = duration, minutes, seconds;
+        gameClock = setInterval(function () {
         minutes = parseInt(timer / 60, 10)
         seconds = parseInt(timer % 60, 10);
 

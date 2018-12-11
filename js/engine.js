@@ -212,5 +212,5 @@ var Engine = (function(global) {
     global.rows = rows;
     global.imageWidth = imageWidth;
     global.imageHeight = imageHeight;
-    global.gameClock;
+    global.gameClock = gameClock;
 })(this);
