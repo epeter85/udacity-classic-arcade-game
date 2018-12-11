@@ -1,134 +1,128 @@
 "use strict";
-// Enemies our player must avoid
-var Enemy = function(currentRow) {
-    // Ememies variables
-    this.sprite = 'images/enemy-bug.png';
-    this.imageOffset = 18;
-    this.currentRow = currentRow;
-    //enemies intiated with random speed and also in update
+
+class Character {
+
+  constructor() {
+    //this.sprite;
     this.speed = Math.floor(Math.random() * (+6 - +2)) + +2;
     //tweak hit width and height for collision
     this.hitWidth = 90;
     this.hitHeight = 40;
-};
+  }
 
-Enemy.prototype.place = function() {
+  render() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  }
+
+}
+
+class Enemy extends Character {
+
+  constructor(currentRow) {
+    super();
+    this.imageOffset = 18;
+    this.sprite = 'images/enemy-bug.png';
+    this.currentRow = currentRow;
+  }
+
+  place() {
     let col = 1;
     this.x = imageWidth * (col-1);
     this.y = (imageHeight * (this.currentRow-1)) - this.imageOffset;
-};
+  }
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
-
+  update(dt) {
     this.x +=((this.speed*100)*dt);
-
     //puts enemies back to home position and generates a randon speed
     if(this.x > ctx.canvas.width) {
       this.x = -(Math.floor(Math.random() * (+500 - +1)) + +1);
       this.speed = Math.floor(Math.random() * (+6 - +2)) + +2;
     }
-};
-
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-
-var Player = function() {
-    //player variables
-    this.sprite = 'images/char-boy.png';
-    this.hitWidth = 90;
-    this.hitHeight = 40;
-    this.imageOffset = 9;
-    this.isColliding = false;
-    this.hasCrossed = false;
-    this.crossings = 0;
-    this.lives = 3;
-};
-
-Player.prototype.place = function() {
-    //home position for player token
-    let col = 3;
-    let row = 6;
-    this.x = imageWidth * (col-1);
-    this.y = (imageHeight * (row-1)) - this.imageOffset;
-
-};
-
-Player.prototype.update = function(dt) {
-
-    //collision trigger
-    if (this.isColliding) {
-      //move token back to home
-      this.place();
-      //reset flag
-      this.isColliding = false;
-      //remove one life
-      this.lives -= 1;
-
-      if(this.lives == 0) {
-        callModal('game_over');
-      }
-
-      this.updateScore();
-
-    }
-
-    //crossing trigger
-    if (this.hasCrossed) {
-      //add one crossing
-      this.crossings +=1;
-      //move token back to home
-      this.place();
-      //reset flag
-      this.hasCrossed = false;
-
-      if(this.crossings == 5) {
-        callModal('win');
-      }
-
-      this.updateScore();
-    }
-};
-
-//updates lives and crossings
-Player.prototype.updateScore = function() {
-
-  let lives = document.querySelector('.lives');
-  let crossings = document.querySelector('.crossings');
-
-  lives.textContent = this.lives;
-  crossings.textContent = this.crossings;
+  }
 
 }
 
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-Player.prototype.handleInput = function(KEY_STATUS) {
-
-    if (KEY_STATUS=='left') {
-        this.x -= imageWidth
-        if (this.x <= 0)
-            this.x = 0;
-    } else if (KEY_STATUS=='right') {
-        this.x += imageWidth
-        if (this.x >= ctx.canvas.width - imageWidth)
-            this.x = ctx.canvas.width - imageWidth;
-    } else if (KEY_STATUS=='up') {
-        this.y -= imageHeight;
-          if (this.y <= -this.imageOffset)
-              this.y = -this.imageOffset;
-    } else if (KEY_STATUS=='down') {
-        this.y += imageHeight;
-        if ((this.y >= ((rows-1) * imageHeight) - this.imageOffset))
-            this.y = ((rows-1) * imageHeight) - this.imageOffset;
+class Player extends Character {
+    constructor(){
+      super();
+      this.sprite = 'images/char-boy.png';
+      this.imageOffset = 9;
+      this.isColliding = false;
+      this.hasCrossed = false;
+      this.crossings = 0;
+      this.lives = 3;
     }
 
+    place() {
+      let col = 3;
+      let row = 6;
+      this.x = imageWidth * (col-1);
+      this.y = (imageHeight * (row-1)) - this.imageOffset;
+    }
+
+    update(dt) {
+      //collision trigger
+      if (this.isColliding) {
+        //move token back to home
+        this.place();
+        //reset flag
+        this.isColliding = false;
+        //remove one life
+        this.lives -= 1;
+
+        if(this.lives == 0) {
+          callModal('game_over');
+        }
+
+        this.updateScore();
+
+      }
+
+      //crossing trigger
+      if (this.hasCrossed) {
+        //add one crossing
+        this.crossings +=1;
+        //move token back to home
+        this.place();
+        //reset flag
+        this.hasCrossed = false;
+
+        if(this.crossings == 5) {
+          callModal('win');
+        }
+
+        this.updateScore();
+      }
+
+    }
+
+    updateScore() {
+      let lives = document.querySelector('.lives');
+      let crossings = document.querySelector('.crossings');
+
+      lives.textContent = this.lives;
+      crossings.textContent = this.crossings;
+    }
+
+    handleInput(KEY_STATUS) {
+      if (KEY_STATUS=='left') {
+          this.x -= imageWidth
+          if (this.x <= 0)
+              this.x = 0;
+      } else if (KEY_STATUS=='right') {
+          this.x += imageWidth
+          if (this.x >= ctx.canvas.width - imageWidth)
+              this.x = ctx.canvas.width - imageWidth;
+      } else if (KEY_STATUS=='up') {
+          this.y -= imageHeight;
+            if (this.y <= -this.imageOffset)
+                this.y = -this.imageOffset;
+      } else if (KEY_STATUS=='down') {
+          this.y += imageHeight;
+          if ((this.y >= ((rows-1) * imageHeight) - this.imageOffset))
+              this.y = ((rows-1) * imageHeight) - this.imageOffset;
+      }
+    }
 }
 
 
@@ -141,7 +135,6 @@ const allEnemies = [enemyOne, enemyTwo, enemyThree];
 
 // Place the player object in a variable called player
 const player = new Player();
-
 
 
 // This listens for key presses and sends the keys to your
@@ -165,7 +158,7 @@ var initGame = function() {
       enemy.place();
   });
 
-}
+};
 
 //modal window has three states: intro, game_over and win
 var callModal = function(state) {
@@ -212,7 +205,8 @@ var callModal = function(state) {
       player.updateScore();
 
       //start countdown timer
-      display = document.querySelector('#time');
+      let display = document.getElementById('time');
+      console.log('display: ' + document.getElementById('time'))
       startTimer(30, display);
   }
 }

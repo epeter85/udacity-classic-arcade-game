@@ -28,6 +28,7 @@ var Engine = (function(global) {
         imageHeight = 83,
         imageWidth = 101,
         gameBoard = doc.getElementById("gameBoard"),
+        gameClock,
         lastTime;
 
     canvas.width = 505;
@@ -211,4 +212,5 @@ var Engine = (function(global) {
     global.rows = rows;
     global.imageWidth = imageWidth;
     global.imageHeight = imageHeight;
+    global.gameClock;
 })(this);
