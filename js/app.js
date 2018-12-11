@@ -204,19 +204,19 @@ var callModal = function(state) {
 
       //start countdown timer
       let display = document.getElementById('time');
-      console.log('display: ' + document.getElementById('time'))
+      console.log('display: ' + document.getElementById('time'));
       startTimer(30, display);
 
       player.updateScore();
-  }
-}
+  };
+};
 
 //simple countdown timer
 var startTimer = function (duration, display) {
-  console.log('start timer')
+  console.log('start timer');
     let timer = duration, minutes, seconds;
         gameClock = setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
+        minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
 
         minutes = minutes < 10 ? "0" + minutes : minutes;
@@ -229,6 +229,6 @@ var startTimer = function (duration, display) {
             callModal('game_over');
         }
     }, 1000);
-}
+};
 //
 callModal('intro');
